@@ -33,7 +33,6 @@ output "aws_instance_offerings" {
     description = "List of instance offerings"
     value = {
         for az, details in data.aws_ec2_instance_type_offerings.example-offerings : az => details.instance_types
-
     }
 }
 
