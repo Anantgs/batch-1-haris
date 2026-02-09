@@ -8,13 +8,14 @@ variable "instance_map" {
 
 resource "aws_instance" "app_server" {
   ami           = data.aws_ami.ubuntu.id
-  #instance_type = "t2.micro"
+  instance_type = "t3.micro"
   # count         = 2
-  for_each      = var.instance_map
-  instance_type = each.value
+  #for_each      = var.instance_map
+  #instance_type = each.value
   vpc_security_group_ids = [aws_security_group.vpc-ssh.id, aws_security_group.vpc-web.id]
   #user_data = file("apache-install.sh")
-
+  for_each = toset(keys({for az, details in data.aws_ec2_instance_type_offerings.example-offerings : az => details.instance_types if length(details.instance_types) != 0}))
+  availability_zone = each.key
   tags = {
     Name = "learn-terraform-${each.key}"
   }
